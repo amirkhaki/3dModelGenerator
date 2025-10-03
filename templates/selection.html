@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<title>3D Model Generator - Selection</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#1919e6",
+              "background-light": "#f6f6f8",
+              "background-dark": "#111121",
+            },
+            fontFamily: {
+              "display": ["Vazirmatn"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+</script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="relative flex h-auto min-h-screen w-full flex-col">
+<div class="flex h-full grow flex-col">
+<header class="border-b border-gray-200 dark:border-gray-700/50">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<nav class="hidden md:flex items-center space-x-8">
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-opacity-90 transition-colors">
+                شروع
+              </button>
+<a class="text-sm font-medium hover:text-primary dark:hover:text-primary" href="/">خانه</a>
+</nav>
+<div class="flex items-center space-x-3">
+<h1 class="text-xl font-bold text-gray-900 dark:text-white">سازنده مدل 3بعدی</h1>
+<div class="w-8 h-8 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z" fill="currentColor"></path>
+</svg>
+</div>
+</div>
+<button class="md:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</header>
+<main class="px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-10 sm:py-16">
+<div class="flex flex-col w-full max-w-5xl">
+<div class="flex flex-col items-center text-center mb-12">
+<h2 class="text-4xl md:text-5xl font-bold tracking-tighter text-gray-900 dark:text-white">تولید مدل 3بعدی از تصاویر</h2>
+<p class="mt-4 max-w-2xl text-lg text-gray-600 dark:text-gray-400">
+                یکی از تصاویر زیر را برای تولید مدل 3بعدی انتخاب کنید
+              </p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+<div id="image1-container" class="group relative flex flex-col cursor-pointer" data-image="image1">
+<div class="w-full aspect-square bg-cover bg-center rounded-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl border border-gray-200 dark:border-gray-700" style='background-image: url("{{ image1 }}");'></div>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg">
+<span class="text-white font-bold text-lg">انتخاب</span>
+</div>
+<div class="selection-indicator hidden absolute top-4 right-4 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-white">check</span>
+</div>
+</div>
+<div id="image2-container" class="group relative flex flex-col cursor-pointer" data-image="image2">
+<div class="w-full aspect-square bg-cover bg-center rounded-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl border border-gray-200 dark:border-gray-700" style='background-image: url("{{ image2 }}");'></div>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg">
+<span class="text-white font-bold text-lg">انتخاب</span>
+</div>
+<div class="selection-indicator hidden absolute top-4 right-4 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-white">check</span>
+</div>
+</div>
+</div>
+<div class="flex justify-center mt-4">
+<button id="generate-model-btn" disabled class="flex items-center justify-center rounded-lg h-12 px-8 bg-primary text-white text-base font-bold tracking-wide hover:bg-primary/90 transition-transform transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+<span class="material-symbols-outlined mr-2">3d_rotation</span>
+<span>تولید مدل 3بعدی</span>
+</button>
+</div>
+<div id="error-message" class="hidden mt-4 p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg text-center">
+</div>
+<div id="loading-message" class="hidden mt-4 p-4 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg text-center">
+در حال تولید مدل 3بعدی...
+</div>
+</div>
+</main>
+</div>
+</div>
+
+<script>
+let selectedImage = null;
+
+document.querySelectorAll('[data-image]').forEach(container => {
+    container.addEventListener('click', function() {
+        // Remove previous selection
+        document.querySelectorAll('.selection-indicator').forEach(indicator => {
+            indicator.classList.add('hidden');
+        });
+        document.querySelectorAll('[data-image]').forEach(c => {
+            c.classList.remove('ring-4', 'ring-primary');
+        });
+        
+        // Add new selection
+        selectedImage = this.dataset.image;
+        this.querySelector('.selection-indicator').classList.remove('hidden');
+        this.classList.add('ring-4', 'ring-primary');
+        
+        // Enable generate button
+        document.getElementById('generate-model-btn').disabled = false;
+    });
+});
+
+document.getElementById('generate-model-btn').addEventListener('click', async function() {
+    if (!selectedImage) {
+        showError('لطفا یک تصویر را انتخاب کنید');
+        return;
+    }
+    
+    showLoading();
+    hideError();
+    
+    try {
+        const response = await fetch('/select-image', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ selected: selectedImage })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            window.location.href = '/viewer';
+        } else {
+            showError(data.error || 'خطا در تولید مدل 3بعدی');
+            hideLoading();
+        }
+    } catch (error) {
+        showError('خطا در ارتباط با سرور');
+        hideLoading();
+        console.error('Error:', error);
+    }
+});
+
+function showError(message) {
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.textContent = message;
+    errorDiv.classList.remove('hidden');
+}
+
+function hideError() {
+    document.getElementById('error-message').classList.add('hidden');
+}
+
+function showLoading() {
+    document.getElementById('loading-message').classList.remove('hidden');
+}
+
+function hideLoading() {
+    document.getElementById('loading-message').classList.add('hidden');
+}
+</script>
+
+</body>
+</html>

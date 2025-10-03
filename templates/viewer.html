@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>3D Model Generator - Viewer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1919e6",
+              "background-light": "#f6f6f8",
+              "background-dark": "#111121",
+            },
+            fontFamily: {
+              "display": ["Vazirmatn"]
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+</script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+      #viewer-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex flex-col min-h-screen">
+<header class="border-b border-gray-200 dark:border-gray-700/50">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<nav class="hidden md:flex items-center space-x-8">
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-opacity-90 transition-colors">
+                شروع
+              </button>
+<a class="text-sm font-medium hover:text-primary dark:hover:text-primary" href="/">خانه</a>
+</nav>
+<div class="flex items-center space-x-3">
+<h1 class="text-xl font-bold text-gray-900 dark:text-white">سازنده مدل 3بعدی</h1>
+<div class="w-8 h-8 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z" fill="currentColor"></path>
+</svg>
+</div>
+</div>
+<button class="md:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-1">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+<div class="max-w-4xl mx-auto text-center">
+<h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">مدل 3بعدی تولید شده</h2>
+<p class="mt-4 text-lg text-gray-600 dark:text-gray-400">تصویر شما به یک مدل 3بعدی زیبا تبدیل شد. با آن تعامل داشته باشید.</p>
+</div>
+<div class="mt-12 max-w-4xl mx-auto">
+<div id="status-message" class="mb-4 p-4 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg text-center">
+در حال بارگذاری مدل 3بعدی...
+</div>
+<div class="aspect-[16/9] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-900/50 shadow-lg">
+<div id="viewer-container" class="relative w-full h-full">
+<!-- 3D viewer will be rendered here -->
+</div>
+</div>
+</div>
+<div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+<button id="download-btn" disabled class="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg h-12 px-8 bg-primary text-white text-base font-bold shadow-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-background-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+<span class="material-symbols-outlined">download</span>
+<span>دانلود مدل 3بعدی (STL)</span>
+</button>
+<a href="/" class="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg h-12 px-8 bg-gray-200 dark:bg-gray-800/50 text-gray-800 dark:text-gray-200 text-base font-bold hover:bg-gray-300 dark:hover:bg-gray-700/70 transition-colors">
+<span class="material-symbols-outlined">home</span>
+<span>بازگشت به خانه</span>
+</a>
+</div>
+<div id="error-message" class="hidden mt-4 p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg text-center max-w-4xl mx-auto">
+</div>
+</div>
+</main>
+</div>
+
+<script>
+const taskId = "{{ task_id }}";
+let modelUrl = null;
+let scene, camera, renderer, controls;
+let checkInterval;
+
+// Initialize Three.js scene
+function initViewer() {
+    const container = document.getElementById('viewer-container');
+    
+    // Scene
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x111121);
+    
+    // Camera
+    camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+    
+    // Renderer
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+    
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(5, 5, 5);
+    scene.add(directionalLight);
+    
+    // Controls
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+}
+
+// Load 3D model (using GLB format - best for web viewing)
+function loadModel(url) {
+    const loader = new THREE.GLTFLoader();
+    loader.load(
+        url,
+        function (gltf) {
+            const object = gltf.scene;
+            
+            // Center and scale the model
+            const box = new THREE.Box3().setFromObject(object);
+            const center = box.getCenter(new THREE.Vector3());
+            object.position.sub(center);
+            
+            const size = box.getSize(new THREE.Vector3());
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scale = 3 / maxDim;
+            object.scale.multiplyScalar(scale);
+            
+            scene.add(object);
+            
+            updateStatus('مدل 3بعدی آماده است!', 'success');
+            document.getElementById('download-btn').disabled = false;
+        },
+        function (xhr) {
+            const percent = (xhr.loaded / xhr.total * 100).toFixed(0);
+            updateStatus(`در حال بارگذاری مدل: ${percent}%`, 'info');
+        },
+        function (error) {
+            console.error('Error loading model:', error);
+            showError('خطا در بارگذاری مدل 3بعدی');
+        }
+    );
+}
+
+// Check model status
+async function checkModelStatus() {
+    try {
+        const response = await fetch(`/model-status/${taskId}`);
+        const data = await response.json();
+        
+        if (response.ok) {
+            if (data.status === 'SUCCEEDED') {
+                clearInterval(checkInterval);
+                // Use proxied URL to avoid CORS issues
+                modelUrl = data.model_url_proxy;
+                if (modelUrl) {
+                    loadModel(modelUrl);
+                } else {
+                    showError('فایل مدل یافت نشد');
+                }
+            } else if (data.status === 'FAILED') {
+                clearInterval(checkInterval);
+                showError('تولید مدل 3بعدی با شکست مواجه شد');
+            } else {
+                const progress = data.progress || 0;
+                updateStatus(`در حال پردازش... ${progress}%`, 'info');
+            }
+        } else {
+            showError(data.error || 'خطا در دریافت وضعیت');
+        }
+    } catch (error) {
+        console.error('Error checking status:', error);
+    }
+}
+
+// Download STL - Convert to STL using Meshy.ai Remesh API (as per PROMPT.md)
+document.getElementById('download-btn').addEventListener('click', async function() {
+    if (!taskId) {
+        showError('شناسه مدل یافت نشد');
+        return;
+    }
+    
+    try {
+        this.disabled = true;
+        updateStatus('در حال تبدیل به فرمت STL...', 'info');
+        
+        // Request STL conversion via Remesh API
+        const response = await fetch('/convert-to-stl', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ task_id: taskId })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.remesh_task_id) {
+            // Poll for STL conversion completion
+            const stlTaskId = data.remesh_task_id;
+            updateStatus('در حال پردازش فایل STL...', 'info');
+            
+            const pollSTL = setInterval(async () => {
+                const statusResp = await fetch(`/remesh-status/${stlTaskId}`);
+                const statusData = await statusResp.json();
+                
+                if (statusData.status === 'SUCCEEDED') {
+                    clearInterval(pollSTL);
+                    updateStatus('دانلود فایل STL...', 'success');
+                    
+                    // Download the STL file
+                    window.location.href = `/download-stl/${stlTaskId}`;
+                    
+                    setTimeout(() => {
+                        this.disabled = false;
+                        updateStatus('مدل 3بعدی آماده است!', 'success');
+                    }, 2000);
+                } else if (statusData.status === 'FAILED') {
+                    clearInterval(pollSTL);
+                    showError('خطا در تبدیل به STL');
+                    this.disabled = false;
+                } else {
+                    const progress = statusData.progress || 0;
+                    updateStatus(`در حال تبدیل به STL... ${progress}%`, 'info');
+                }
+            }, 2000);
+        } else {
+            showError(data.error || 'خطا در شروع تبدیل');
+            this.disabled = false;
+        }
+    } catch (error) {
+        console.error('Error converting to STL:', error);
+        showError('خطا در دانلود فایل');
+        this.disabled = false;
+    }
+});
+
+function updateStatus(message, type) {
+    const statusDiv = document.getElementById('status-message');
+    statusDiv.textContent = message;
+    
+    statusDiv.className = 'mb-4 p-4 rounded-lg text-center';
+    if (type === 'success') {
+        statusDiv.className += ' bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300';
+    } else if (type === 'error') {
+        statusDiv.className += ' bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300';
+    } else {
+        statusDiv.className += ' bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300';
+    }
+}
+
+function showError(message) {
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.textContent = message;
+    errorDiv.classList.remove('hidden');
+    updateStatus('خطا رخ داد', 'error');
+}
+
+// Initialize
+initViewer();
+
+// Start checking model status every 3 seconds
+if (taskId) {
+    checkModelStatus();
+    checkInterval = setInterval(checkModelStatus, 3000);
+}
+</script>
+
+</body>
+</html>

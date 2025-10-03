@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>3D Model Generator</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#1919e6",
+              "background-light": "#f6f6f8",
+              "background-dark": "#111121",
+            },
+            fontFamily: {
+              "display": ["Vazirmatn"]
+            },
+            borderRadius: {
+              "DEFAULT": "0.25rem",
+              "lg": "0.5rem",
+              "xl": "0.75rem",
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex flex-col min-h-screen">
+<header class="border-b border-gray-200 dark:border-gray-700/50">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<nav class="hidden md:flex items-center space-x-8">
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-opacity-90 transition-colors">
+                شروع
+              </button>
+<a class="text-sm font-medium hover:text-primary dark:hover:text-primary" href="/">خانه</a>
+</nav>
+<div class="flex items-center space-x-3">
+<h1 class="text-xl font-bold text-gray-900 dark:text-white">سازنده مدل 3بعدی</h1>
+<div class="w-8 h-8 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z" fill="currentColor"></path>
+</svg>
+</div>
+</div>
+<button class="md:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-4xl mx-auto flex flex-col items-center">
+<div class="text-center mb-8">
+<h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">ایده خود را دنیوی کنید</h2>
+<p class="text-lg text-gray-600 dark:text-gray-400">متن خود را به عکس های زیبا و  دل انگیز  تبدیل کنید</p>
+</div>
+<div class="w-full max-w-2xl mb-8">
+<div class="relative">
+    <span class="material-symbols-outlined absolute left-4 top-4 text-gray-400 dark:text-gray-500">
+        image_search
+    </span>
+
+    <textarea
+        id="auto-extend-textarea"
+        class="
+            w-full
+            min-h-14
+            py-4
+            pl-14 pr-4
+            text-right
+            rounded-lg
+            bg-white dark:bg-background-dark
+            border border-gray-300 dark:border-gray-700
+            focus:ring-2 focus:ring-primary focus:border-primary
+            transition-colors
+            text-gray-900 dark:text-white
+            placeholder-gray-400 dark:placeholder-gray-500
+            overflow-hidden
+        "
+        placeholder="توصیف تصویر شما"
+        rows="1"
+        oninput="autoExpand(this)"
+    ></textarea>
+</div>
+</div>
+<div class="w-full @container">
+<div id="image-container" class="grid grid-cols-1 @[480px]:grid-cols-2 gap-4 rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-800">
+<div id="image1-placeholder" class="bg-gray-200 bg-cover bg-center aspect-square"></div>
+<div id="image2-placeholder" class="bg-gray-200 bg-cover bg-center aspect-square"></div>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 mt-8 w-full max-w-md">
+<button id="generate-3d-btn" disabled class="flex-1 h-12 px-6 rounded-lg bg-primary text-white font-bold text-sm hover:bg-opacity-90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+<span class="material-symbols-outlined">3d_rotation</span>
+             تولید مدل 3بعدی
+            </button>
+<button id="generate-images-btn" class="flex-1 h-12 px-6 rounded-lg bg-gray-200 dark:bg-gray-800/50 text-gray-800 dark:text-gray-200 font-bold text-sm hover:bg-gray-300 dark:hover:bg-gray-700/70 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">refresh</span>
+             تولید عکس ها
+            </button>
+</div>
+<div id="error-message" class="hidden mt-4 p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg">
+</div>
+<div id="loading-message" class="hidden mt-4 p-4 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg">
+در حال تولید تصاویر...
+</div>
+</div>
+</main>
+</div>
+<script>
+let generatedImages = null;
+
+function autoExpand(field) {
+    field.style.height = 'inherit';
+    field.style.height = (field.scrollHeight) + 'px';
+}
+
+document.getElementById('generate-images-btn').addEventListener('click', async function() {
+    const prompt = document.getElementById('auto-extend-textarea').value.trim();
+    
+    if (!prompt) {
+        showError('لطفا توصیف تصویر را وارد کنید');
+        return;
+    }
+    
+    showLoading();
+    hideError();
+    
+    try {
+        const response = await fetch('/generate-images', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt: prompt })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            generatedImages = data;
+            displayImages(data.image1, data.image2);
+            document.getElementById('generate-3d-btn').disabled = false;
+            hideLoading();
+        } else {
+            showError(data.error || 'خطا در تولید تصاویر');
+            hideLoading();
+        }
+    } catch (error) {
+        showError('خطا در ارتباط با سرور');
+        hideLoading();
+        console.error('Error:', error);
+    }
+});
+
+document.getElementById('generate-3d-btn').addEventListener('click', function() {
+    if (generatedImages) {
+        window.location.href = '/selection';
+    }
+});
+
+function displayImages(image1, image2) {
+    const container = document.getElementById('image-container');
+    container.innerHTML = `
+        <div class="bg-cover bg-center aspect-square" style="background-image: url('${image1}');"></div>
+        <div class="bg-cover bg-center aspect-square" style="background-image: url('${image2}');"></div>
+    `;
+}
+
+function showError(message) {
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.textContent = message;
+    errorDiv.classList.remove('hidden');
+}
+
+function hideError() {
+    document.getElementById('error-message').classList.add('hidden');
+}
+
+function showLoading() {
+    document.getElementById('loading-message').classList.remove('hidden');
+}
+
+function hideLoading() {
+    document.getElementById('loading-message').classList.add('hidden');
+}
+</script>
+</body>
+</html>
